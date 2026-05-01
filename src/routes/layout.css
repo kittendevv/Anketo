@@ -1,2 +1,43 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
+@plugin 'daisyui' {
+	themes: all;
+}
+
+@plugin 'daisyui/theme' {
+	name: 'anketo-dark';
+	default: true;
+	prefersdark: true;
+	color-scheme: 'light';
+	--color-base-100: #2a1f33;
+	--color-base-200: #1e1529;
+	--color-base-300: #140e1c;
+	--color-base-content: #e9d5ff;
+	--color-primary: #9333ea;
+	--color-primary-content: #ffffff;
+	--color-secondary: #6d28d9;
+	--color-secondary-content: oklch(94% 0.028 342.258);
+	--color-accent: #c084fc;
+	--color-accent-content: #1e1529;
+	--color-neutral: #3d2b4a;
+	--color-neutral-content: #ffffff;
+	--color-info: #38bdf8;
+	--color-info-content: #0c1a2e;
+	--color-success: #4ade80;
+	--color-success-content: #052e16;
+	--color-warning: #fbbf24;
+	--color-warning-content: #1c1003;
+	--color-error: #f87171;
+	--color-error-content: #2d0a0a;
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
+}
+
+html {
+	font-family: 'DM Sans Variable', sans-serif;
+}
