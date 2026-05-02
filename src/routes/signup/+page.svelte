@@ -1,12 +1,24 @@
 <script lang="ts">
 	import { authClient } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-
 	import UserIcon from 'phosphor-svelte/lib/UserIcon';
 	import EnvelopeIcon from 'phosphor-svelte/lib/EnvelopeIcon';
 	import PasswordIcon from 'phosphor-svelte/lib/PasswordIcon';
 
-	const session = authClient.useSession();
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let error = $state('');
+
+	async function handleSubmit() {
+		const { error: err } = await authClient.signUp.email({ email, password, name });
+		if (err) {
+			error = err.message ?? 'Something went wrong';
+			return;
+		}
+		goto(resolve('/'));
+	}
 </script>
 
 <div class="relative flex h-screen">
@@ -24,27 +36,29 @@
 			<a href={resolve('/login')} class="font-medium underline"> login </a>
 			instead.
 		</p>
-		<fieldset class="fieldset w-1/3">
-			<p class="text-base-content/75">Username</p>
-			<label class="input w-full">
-				<UserIcon />
-				<input type="text" required placeholder="Username" />
-			</label>
-
-			<p class="text-base-content/75">Email</p>
-			<label class="input w-full">
-				<EnvelopeIcon />
-				<input type="text" required placeholder="Email" />
-			</label>
-
-			<p class="text-base-content/75">Password</p>
-			<label class="input w-full">
-				<PasswordIcon />
-				<input type="text" required placeholder="Password" />
-			</label>
-
-			<button class="btn mt-4 btn-primary">Sign Up</button>
-		</fieldset>
+		{#if error}
+			<div class="mt-4 alert max-w-sm alert-error">{error}</div>
+		{/if}
+		<form onsubmit={handleSubmit} class="w-full max-w-sm">
+			<fieldset class="fieldset w-full">
+				<p class="text-base-content/75">Username</p>
+				<label class="input w-full">
+					<UserIcon />
+					<input type="text" required placeholder="Username" bind:value={name} />
+				</label>
+				<p class="text-base-content/75">Email</p>
+				<label class="input w-full">
+					<EnvelopeIcon />
+					<input type="email" required placeholder="Email" bind:value={email} />
+				</label>
+				<p class="text-base-content/75">Password</p>
+				<label class="input w-full">
+					<PasswordIcon />
+					<input type="password" required placeholder="Password" bind:value={password} />
+				</label>
+				<button type="submit" class="btn mt-4 w-full btn-primary">Sign Up</button>
+			</fieldset>
+		</form>
 	</div>
 	<div class="absolute top-2 right-3">
 		<span class="text-xl font-semibold">Ankēto</span>
