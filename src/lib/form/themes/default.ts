@@ -1,10 +1,8 @@
-// src/lib/form/themes/default.ts
 export const defaultTheme = `
   .anketo-form {
     font-family: var(--anketo-font-family);
     font-size: var(--anketo-font-size);
     color: var(--anketo-color-text);
-    background-color: var(--anketo-color-bg);
     max-width: var(--anketo-max-width);
     margin: 0 auto;
     padding: 2rem;
@@ -27,10 +25,10 @@ export const defaultTheme = `
   .anketo-form textarea,
   .anketo-form select {
     width: 100%;
-    background-color: var(--anketo-input-bg);
-    border: 1px solid var(--anketo-input-border);
-    border-radius: var(--anketo-input-border-radius);
-    padding: var(--anketo-input-padding);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--anketo-input-border);
+    padding: 0.5rem 0;
     color: var(--anketo-color-text);
     font-family: var(--anketo-font-family);
     font-size: var(--anketo-font-size);
@@ -41,7 +39,7 @@ export const defaultTheme = `
   .anketo-form input:focus,
   .anketo-form textarea:focus,
   .anketo-form select:focus {
-    border-color: var(--anketo-input-focus-color);
+    border-bottom-color: var(--anketo-input-focus-color);
   }
 
   .anketo-form textarea {
@@ -50,27 +48,22 @@ export const defaultTheme = `
   }
 
   .anketo-form fieldset {
-    border: 1px solid var(--anketo-input-border);
-    border-radius: var(--anketo-input-border-radius);
-    padding: 1rem;
+    border: none;
+    padding: 0;
+    margin: 0;
   }
 
   .anketo-form legend {
     color: var(--anketo-section-color);
     font-size: var(--anketo-section-font-size);
     font-weight: 600;
-    padding: 0 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .anketo-form input[type="radio"],
   .anketo-form input[type="checkbox"] {
     accent-color: var(--anketo-input-focus-color);
     margin-right: 0.5rem;
-  }
-
-  .anketo-form input[type="radio"] + label,
-  .anketo-form input[type="checkbox"] + label {
-    display: inline;
   }
 
   .anketo-form button[type="submit"],

@@ -1,7 +1,58 @@
 import { parse as parseYAML } from 'yaml';
+
 const regex = /@(\w+)\(([^)]+)\)(?:\[([^\]]*)\])?/;
 const regex_section = /#\(([^)]+)\)(?:\[([^\]]*)\])?/;
 const regex_radio = /^-\s+(.+)$/;
+
+function parseArgs(args: string[]): { required: boolean } {
+	return {
+		required: args.includes('r') || args.includes('required')
+	};
+}
+
+function buildField(
+	type: string,
+	label: string,
+	args: string[],
+	regex: RegExp,
+	regex_radio: RegExp,
+	lines: string[],
+	startIndex: number
+): { data: any; nextIndex: number } {
+	if (type === 'radio' || type === 'dropdown' || type === 'checkbox') {
+		const options = [];
+		let i = startIndex + 1;
+		while (i < lines.length) {
+			const optionLine = lines[i];
+			const optionMatch = optionLine.match(regex_radio);
+			if (!optionMatch) {
+				break;
+			}
+			const optionContent = optionMatch[1].trim();
+			const nestedFieldMatch = optionContent.match(regex);
+			if (nestedFieldMatch) {
+				const [_, nestedType, nestedLabel, nestedBracketContent] = nestedFieldMatch;
+				const nestedArgs = nestedBracketContent
+					? nestedBracketContent.split(',').map((arg) => arg.trim())
+					: [];
+				options.push({ type: nestedType, label: nestedLabel, args: nestedArgs });
+			} else {
+				options.push(optionContent);
+			}
+			i++;
+		}
+		return {
+			data: { type, label, args, options, ...parseArgs(args) },
+			nextIndex: i
+		};
+	} else {
+		return {
+			data: { type, label, args, ...parseArgs(args) },
+			nextIndex: startIndex + 1
+		};
+	}
+}
+
 export function parse(str: string) {
 	const lines = str.split('\n');
 	let i = 0;
@@ -85,46 +136,4 @@ export function parse(str: string) {
 		...(frontmatter && { frontmatter }),
 		content: results
 	};
-}
-function buildField(
-	type: string,
-	label: string,
-	args: string[],
-	regex: RegExp,
-	regex_radio: RegExp,
-	lines: string[],
-	startIndex: number
-): { data: any; nextIndex: number } {
-	if (type === 'radio' || type === 'dropdown' || type === 'checkbox') {
-		const options = [];
-		let i = startIndex + 1;
-		while (i < lines.length) {
-			const optionLine = lines[i];
-			const optionMatch = optionLine.match(regex_radio);
-			if (!optionMatch) {
-				break;
-			}
-			const optionContent = optionMatch[1].trim();
-			const nestedFieldMatch = optionContent.match(regex);
-			if (nestedFieldMatch) {
-				const [_, nestedType, nestedLabel, nestedBracketContent] = nestedFieldMatch;
-				const nestedArgs = nestedBracketContent
-					? nestedBracketContent.split(',').map((arg) => arg.trim())
-					: [];
-				options.push({ type: nestedType, label: nestedLabel, args: nestedArgs });
-			} else {
-				options.push(optionContent);
-			}
-			i++;
-		}
-		return {
-			data: { type, label, args, options },
-			nextIndex: i
-		};
-	} else {
-		return {
-			data: { type, label, args },
-			nextIndex: startIndex + 1
-		};
-	}
 }

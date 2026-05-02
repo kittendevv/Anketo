@@ -31,23 +31,36 @@
 
 {@html `<style>${defaultTheme}</style>`}
 
-<div class="anketo-form" style={tokenString}>
-	{#if paginated}
-		<Renderer field={fields[currentSection]} />
-		<div>
-			{#if currentSection > 0}
-				<button onclick={() => currentSection--}>Previous</button>
-			{/if}
-			{#if currentSection < total - 1}
-				<button onclick={() => currentSection++}>Next</button>
-			{:else}
-				<button type="submit">Submit</button>
-			{/if}
-		</div>
-	{:else}
-		{#each fields as field, i (i)}
-			<Renderer {field} />
-		{/each}
-		<button type="submit">Submit</button>
-	{/if}
-</div>
+<form>
+	<div class="anketo-form" style={tokenString}>
+		{#if paginated}
+			<Renderer field={fields[currentSection]} />
+			<div>
+				{#if currentSection > 0}
+					<button type="button" onclick={() => currentSection--}>Previous</button>
+				{/if}
+				{#if currentSection < total - 1}
+					<button
+						type="submit"
+						onclick={(e) => {
+							e.preventDefault();
+							const form = e.currentTarget.closest('form');
+							if (form?.checkValidity()) {
+								currentSection++;
+							} else {
+								form?.reportValidity();
+							}
+						}}>Next</button
+					>
+				{:else}
+					<button type="submit">Submit</button>
+				{/if}
+			</div>
+		{:else}
+			{#each fields as field, i (i)}
+				<Renderer {field} />
+			{/each}
+			<button type="submit">Submit</button>
+		{/if}
+	</div>
+</form>

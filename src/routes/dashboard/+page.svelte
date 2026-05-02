@@ -10,7 +10,10 @@
 <div class="mx-25 my-5">
 	<div class="flex">
 		<h1 class="flex-1 text-4xl font-bold">Your forms</h1>
-		<a href={resolve('/dashboard')} class="flex items-center rounded-box bg-primary px-3 py-1">
+		<a
+			href={resolve('/dashboard/forms/new')}
+			class="flex items-center rounded-box bg-primary px-3 py-1"
+		>
 			<PlusIcon weight="bold" class="mr-1" />
 			New Form
 		</a>
