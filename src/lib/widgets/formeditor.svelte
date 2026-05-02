@@ -1,9 +1,24 @@
 <script lang="ts">
+	// external imports
+	import { untrack } from 'svelte';
+
 	import CodeMirror from 'svelte-codemirror-editor';
 	import { anketoTheme } from '$lib/editor/theme';
 	import { anketoLanguage, anketoHighlighting } from '$lib/editor/language';
 
-	let value = $state('');
+	// internal imports
+	import { parse } from '$lib/parser';
+	import FormRenderer from '$lib/form/FormRenderer.svelte';
+
+	// variables
+	let { initial }: { initial: string } = $props();
+	let value = $state(untrack(() => initial));
+
+	let parsed = $derived(parse(value));
+
+	$effect(() => {
+		console.log(parsed.content);
+	});
 </script>
 
 <div class="flex h-screen">
@@ -15,10 +30,6 @@
 		/>
 	</div>
 	<div class="h-screen w-1/2 overflow-auto">
-		<img
-			src="https://picsum.photos/800/1200"
-			alt="placeholder"
-			class="h-full w-full object-cover"
-		/>
+		<FormRenderer fields={parsed.content} frontmatter={parsed.frontmatter} />
 	</div>
 </div>

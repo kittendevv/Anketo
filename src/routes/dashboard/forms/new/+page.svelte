@@ -2,4 +2,9 @@
 	import FormEditor from '$lib/widgets/formeditor.svelte';
 </script>
 
-<FormEditor />
+<FormEditor
+	initial="---
+title: Untitled Form
+paginated: false
+---"
+/>
