@@ -5,7 +5,7 @@
 
 <div class="flex h-full min-h-screen">
 	<Menu />
-	<div class="flex-1">
+	<div class="h-full flex-1">
 		{@render children()}
 	</div>
 </div>
