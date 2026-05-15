@@ -5,7 +5,7 @@
 
 <fieldset>
 	<legend>{data.label}</legend>
-	{#each data.options as option (option)}
+	{#each data.options as option, index (index)}
 		<label>
 			<input type="checkbox" name={data.label} value={option} />
 			{option}
