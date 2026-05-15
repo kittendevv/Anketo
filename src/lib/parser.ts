@@ -29,16 +29,9 @@ function buildField(
 				break;
 			}
 			const optionContent = optionMatch[1].trim();
-			const nestedFieldMatch = optionContent.match(regex);
-			if (nestedFieldMatch) {
-				const [_, nestedType, nestedLabel, nestedBracketContent] = nestedFieldMatch;
-				const nestedArgs = nestedBracketContent
-					? nestedBracketContent.split(',').map((arg) => arg.trim())
-					: [];
-				options.push({ type: nestedType, label: nestedLabel, args: nestedArgs });
-			} else {
-				options.push(optionContent);
-			}
+
+			options.push(optionContent);
+
 			i++;
 		}
 		return {
@@ -54,7 +47,7 @@ function buildField(
 }
 
 export function parse(str: string) {
-	const lines = str.split('\n');
+	const lines = str.split(/\r?\n/);
 	let i = 0;
 	let frontmatter: Record<string, any> | null = null;
 	if (lines[0]?.trim() === '---') {

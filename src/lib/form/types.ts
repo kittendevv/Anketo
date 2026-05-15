@@ -59,7 +59,7 @@ export type DropdownField = BaseField & {
 
 export type RadioField = BaseField & {
 	type: 'radio';
-	options: (string | BaseField)[];
+	options: string[];
 };
 
 // text block
