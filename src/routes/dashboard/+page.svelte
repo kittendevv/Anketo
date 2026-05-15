@@ -7,7 +7,7 @@
 	import FormCard from '$lib/widgets/formcard.svelte';
 </script>
 
-<div class="mx-25 my-5">
+<div class="mx-3 my-5 lg:mx-25">
 	<div class="flex">
 		<h1 class="flex-1 text-4xl font-bold">Your forms</h1>
 		<a
