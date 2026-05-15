@@ -14,6 +14,7 @@
         "@lezer/highlight": "^1.2.3",
         "better-auth": "^1.6.9",
         "daisyui": "^5.5.19",
+        "nanoid": "^5.1.11",
         "phosphor-svelte": "^3.1.0",
         "svelte-codemirror-editor": "^2.1.0",
         "svelte-splitpanes": "^8.0.12",
@@ -529,7 +530,7 @@
 
     "ms": ["ms@2.1.3", "", {}, ""],
 
-    "nanoid": ["nanoid@3.3.12", "", { "bin": "bin/nanoid.cjs" }, ""],
+    "nanoid": ["nanoid@5.1.11", "", { "bin": { "nanoid": "bin/nanoid.js" } }, "sha512-v+KEsUv2ps74PaSKv0gHTxTCgMXOIfBEbaqa6w6ISIGC7ZsvHN4N9oJ8d4cmf0n5oTzQz2SLmThbQWhjd/8eKg=="],
 
     "nanostores": ["nanostores@1.3.0", "", {}, ""],
 
@@ -680,6 +681,8 @@
     "eslint-plugin-svelte/globals": ["globals@16.5.0", "", {}, ""],
 
     "lightningcss/detect-libc": ["detect-libc@2.1.2", "", {}, ""],
+
+    "postcss/nanoid": ["nanoid@3.3.12", "", { "bin": "bin/nanoid.cjs" }, ""],
 
     "postcss-load-config/yaml": ["yaml@1.10.3", "", {}, "sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA=="],
 

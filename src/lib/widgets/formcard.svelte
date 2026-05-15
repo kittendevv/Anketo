@@ -1,10 +1,15 @@
 <script lang="ts">
-	const { title, status, updatedAt } = $props();
+	import { resolve } from '$app/paths';
+
+	const { title, status, updatedAt, id } = $props();
 	import FileDashedIcon from 'phosphor-svelte/lib/FileDashedIcon';
 	import PaperPlaneTiltIcon from 'phosphor-svelte/lib/PaperPlaneTiltIcon';
 </script>
 
-<div class="my-1 rounded-box p-2 hover:cursor-pointer hover:bg-base-100">
+<a
+	class="my-1 rounded-box p-2 hover:cursor-pointer hover:bg-base-100"
+	href={resolve(`/dashboard/forms/${id}`)}
+>
 	<div class="flex items-center">
 		<p class="mr-2 text-xl">{title}</p>
 		{#if status === 'draft'}
@@ -20,4 +25,4 @@
 		{/if}
 	</div>
 	<p class="text-base-content/80">Edited {updatedAt} ago</p>
-</div>
+</a>

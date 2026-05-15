@@ -21,7 +21,7 @@
 	<div class="divider"></div>
 	<div class="flex flex-col">
 		{#each data.forms as form (form.id)}
-			<FormCard title={form.title} status={form.status} updatedAt={form.updatedAt} />
+			<FormCard title={form.title} status={form.status} updatedAt={form.updatedAt} id={form.id} />
 		{:else}
 			<p>No forms yet</p>
 		{/each}

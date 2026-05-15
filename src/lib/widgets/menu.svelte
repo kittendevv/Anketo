@@ -11,7 +11,7 @@
 	import SignOutIcon from 'phosphor-svelte/lib/SignOutIcon';
 </script>
 
-<ul class="menu w-54 rounded-box bg-base-300">
+<ul class="menu w-54 bg-base-300">
 	<div class="flex-1">
 		<p class="my-2 ml-1 text-3xl font-medium">Ankēto</p>
 
