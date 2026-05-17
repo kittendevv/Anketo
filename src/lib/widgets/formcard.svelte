@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 
-	const { title, status, updatedAt, id } = $props();
+	const { title, status, updatedAt, id, slug } = $props();
 	import FileDashedIcon from 'phosphor-svelte/lib/FileDashedIcon';
 	import PaperPlaneTiltIcon from 'phosphor-svelte/lib/PaperPlaneTiltIcon';
 	import TrashIcon from 'phosphor-svelte/lib/TrashIcon';
+	import ArrowSquareOutIcon from 'phosphor-svelte/lib/ArrowSquareOutIcon';
 
 	let delete_confirm_modal = $state<HTMLDialogElement>();
 
@@ -61,6 +62,11 @@
 				<TrashIcon weight="bold" />
 			</button>
 		</div>
+		{#if status === 'public'}
+			<a class="btn btn-ghost" href={resolve(`/f/${slug}`)}>
+				<ArrowSquareOutIcon weight="bold" />
+			</a>
+		{/if}
 	</div>
 </div>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	// external imports
+	import { resolve } from '$app/paths';
 	import { untrack } from 'svelte';
 	import { page } from '$app/state';
 
@@ -15,19 +16,25 @@
 	import FloppyDiskIcon from 'phosphor-svelte/lib/FloppyDiskIcon';
 	import FileDashedIcon from 'phosphor-svelte/lib/FileDashedIcon';
 	import PaperPlaneTiltIcon from 'phosphor-svelte/lib/PaperPlaneTiltIcon';
+	import ArrowSquareOutIcon from 'phosphor-svelte/lib/ArrowSquareOutIcon';
 
 	// variables
 	let {
 		initial,
-		status
+		status,
+		slug
 	}: {
 		initial: string;
 		status: 'draft' | 'public';
+		slug?: string;
 	} = $props();
 
 	let value = $state(untrack(() => initial));
 
 	let parsed = $derived(parse(value));
+
+	let unpublish_confirm_modal = $state<HTMLDialogElement>();
+	let publish_confirm_modal = $state<HTMLDialogElement>();
 </script>
 
 <div class="flex h-screen flex-col">
@@ -51,29 +58,20 @@
 		<div class="flex gap-2">
 			{#if page.url.pathname != '/dashboard/forms/new'}
 				{#if status === 'draft'}
-					<form method="POST" action="?/publish">
-						<input type="hidden" name="content" {value} />
-
-						<input
-							type="hidden"
-							name="title"
-							value={parsed.frontmatter?.title ?? 'Untitled Form'}
-						/>
-
-						<input type="hidden" name="status" value="published" />
-
-						<button class="btn" type="submit">
-							<PaperPlaneTiltIcon weight="bold" />
-							Publish
-						</button>
-					</form>
+					<button onclick={() => publish_confirm_modal.showModal()} class="btn" type="submit">
+						<PaperPlaneTiltIcon weight="bold" />
+						Publish
+					</button>
 				{:else}
-					<form method="POST" action="?/unpublish">
-						<button class="btn" type="submit">
-							<FileDashedIcon weight="bold" />
-							Unpublish
-						</button>
-					</form>
+					{#if typeof slug == 'string'}
+						<a class="btn btn-ghost" href={resolve(`/f/${slug}`)}>
+							<ArrowSquareOutIcon weight="bold" />
+						</a>
+					{/if}
+					<button onclick={() => unpublish_confirm_modal.showModal()} class="btn" type="submit">
+						<FileDashedIcon weight="bold" />
+						Unpublish
+					</button>
 				{/if}
 			{/if}
 
@@ -102,7 +100,52 @@
 			/>
 		</div>
 		<div class="w-1/2 overflow-auto">
-			<FormRenderer fields={parsed.content} frontmatter={parsed.frontmatter} />
+			<FormRenderer fields={parsed.content} frontmatter={parsed.frontmatter} status="draft" />
 		</div>
 	</div>
 </div>
+
+<dialog bind:this={publish_confirm_modal} class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Are you sure you want to publish?</h3>
+		<p class="py-4">
+			Make sure everything looks perfect! Publishing makes your form visible to the world.
+		</p>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn">Cancel</button>
+			</form>
+
+			<form method="POST" action="?/publish">
+				<input type="hidden" name="content" {value} />
+
+				<input type="hidden" name="title" value={parsed.frontmatter?.title ?? 'Untitled Form'} />
+
+				<input type="hidden" name="status" value="published" />
+
+				<button class="btn btn-soft btn-primary" type="submit">
+					<PaperPlaneTiltIcon weight="bold" />
+					Publish
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>
+
+<dialog bind:this={unpublish_confirm_modal} class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Are you sure you want to unpublish?</h3>
+		<p class="py-4">This will take your form offline. You can always publish it again later!</p>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn">Cancel</button>
+			</form>
+			<form method="POST" action="?/unpublish">
+				<button class="btn btn-soft btn-error" type="submit">
+					<FileDashedIcon weight="bold" />
+					Unpublish
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>

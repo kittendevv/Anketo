@@ -6,15 +6,16 @@
 
 	let {
 		fields,
-		frontmatter = {}
+		frontmatter = {},
+		status
 	}: {
 		fields: FormField[];
 		frontmatter?: Record<string, any>;
+		status: 'draft' | 'public';
 	} = $props();
 
 	let currentSection = $state(0);
 
-	// Generate a unique ID for scoping custom CSS
 	const formId = `anketo-${Math.random().toString(36).slice(2, 9)}`;
 
 	const paginated = $derived(
@@ -22,7 +23,6 @@
 	);
 	const total = $derived(fields.length);
 
-	// THE THEME CASCADE: Defaults -> Chosen Theme -> Frontmatter Overrides
 	const mergedTokens = $derived({
 		...defaultTokens,
 		...(themes[frontmatter?.theme] || themes.dark || defaultTokens),
@@ -35,7 +35,7 @@
 			.join('; ')
 	);
 
-	// THE XSS-SAFE CUSTOM CSS INJECTOR
+	// XSS-SAFE CUSTOM CSS INJECTOR
 	$effect(() => {
 		if (!frontmatter?.customCss) return;
 
@@ -61,7 +61,7 @@
 	});
 </script>
 
-<form>
+<form method="POST">
 	<div id={formId} class="anketo-form" style={tokenString}>
 		{#if paginated}
 			<Renderer field={fields[currentSection]} />
@@ -90,7 +90,11 @@
 			{#each fields as field, i (i)}
 				<Renderer {field} />
 			{/each}
-			<button type="submit">Submit</button>
+			{#if status === 'draft'}
+				<button disabled>Submit</button>
+			{:else}
+				<button type="submit">Submit</button>
+			{/if}
 		{/if}
 	</div>
 </form>
@@ -117,7 +121,7 @@
 	:global(.anketo-form label),
 	:global(.anketo-form legend) {
 		display: block;
-		margin-bottom: 0.25rem;
+		margin-top: 0.25rem;
 		color: var(--anketo-color-text-muted);
 		font-size: 0.875rem;
 	}
@@ -138,13 +142,14 @@
 		width: 100%;
 		background: transparent;
 		border: none;
-		border-bottom: 1px solid var(--anketo-input-border);
+		border-bottom: 2px solid var(--anketo-input-border);
 		padding: 0.5rem 0;
 		color: var(--anketo-color-text);
 		font-family: var(--anketo-font-family);
 		font-size: var(--anketo-font-size);
 		outline: none;
 		transition: border-color 150ms;
+		margin-top: -1rem;
 	}
 
 	:global(.anketo-form input:focus),

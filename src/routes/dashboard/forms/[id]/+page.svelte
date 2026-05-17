@@ -3,4 +3,4 @@
 	let { data } = $props();
 </script>
 
-<FormEditor initial={data.form.content} status={data.form.status} />
+<FormEditor initial={data.form.content} status={data.form.status} slug={data.form.slug} />
