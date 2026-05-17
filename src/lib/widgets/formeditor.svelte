@@ -1,6 +1,7 @@
 <script lang="ts">
 	// external imports
 	import { untrack } from 'svelte';
+	import { page } from '$app/state';
 
 	import CodeMirror from 'svelte-codemirror-editor';
 	import { anketoTheme } from '$lib/editor/theme';
@@ -30,8 +31,8 @@
 </script>
 
 <div class="flex h-screen flex-col">
-	<div class="flex h-10 flex-none items-center bg-base-300 p-4">
-		<div class="flex flex-1 items-center">
+	<div class="flex h-15 flex-none items-center bg-base-300 px-4">
+		<div class="flex flex-1 items-center text-xl">
 			{parsed.frontmatter?.title ?? 'No Title'}
 			<div class="ml-2">
 				{#if status === 'draft'}
@@ -47,27 +48,33 @@
 				{/if}
 			</div>
 		</div>
-		<div class="flex">
-			{#if status === 'draft'}
-				<form method="POST" action="?/publish">
-					<input type="hidden" name="content" {value} />
+		<div class="flex gap-2">
+			{#if page.url.pathname != '/dashboard/forms/new'}
+				{#if status === 'draft'}
+					<form method="POST" action="?/publish">
+						<input type="hidden" name="content" {value} />
 
-					<input type="hidden" name="title" value={parsed.frontmatter?.title ?? 'Untitled Form'} />
+						<input
+							type="hidden"
+							name="title"
+							value={parsed.frontmatter?.title ?? 'Untitled Form'}
+						/>
 
-					<input type="hidden" name="status" value="published" />
+						<input type="hidden" name="status" value="published" />
 
-					<button class="btn" type="submit">
-						<PaperPlaneTiltIcon weight="bold" />
-						Publish
-					</button>
-				</form>
-			{:else}
-				<form method="POST" action="?/unpublish">
-					<button class="btn" type="submit">
-						<FileDashedIcon weight="bold" />
-						Unpublish
-					</button>
-				</form>
+						<button class="btn" type="submit">
+							<PaperPlaneTiltIcon weight="bold" />
+							Publish
+						</button>
+					</form>
+				{:else}
+					<form method="POST" action="?/unpublish">
+						<button class="btn" type="submit">
+							<FileDashedIcon weight="bold" />
+							Unpublish
+						</button>
+					</form>
+				{/if}
 			{/if}
 
 			<form method="POST" action="?/save">

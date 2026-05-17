@@ -18,8 +18,10 @@ export const actions = {
 		const title = data.get('title') as string;
 		const status = data.get('status') as 'draft' | 'public';
 
+		const formId = nanoid();
+
 		await db.insert(forms).values({
-			id: nanoid(),
+			id: formId,
 			userId: session.user.id,
 			title,
 			slug: nanoid(8),
@@ -27,6 +29,6 @@ export const actions = {
 			status
 		});
 
-		throw redirect(303, '/dashboard');
+		throw redirect(303, `/dashboard/forms/${formId}`);
 	}
 } satisfies Actions;

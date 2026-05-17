@@ -38,7 +38,7 @@
 	<ProseBlock data={field} />
 {:else if field.type === 'section'}
 	<fieldset>
-		<legend>{field.label}</legend>
+		<h1>{field.label}</h1>
 		{#each field.fields as f, i (i)}
 			<Renderer field={f} />
 		{/each}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { authClient } from '$lib/auth-client';
 	const session = authClient.useSession();
@@ -16,25 +16,25 @@
 		<p class="my-2 ml-1 text-3xl font-medium">Ankēto</p>
 
 		<div class="divider"></div>
-		<li class="rounded-box" class:menu-active={$page.url.pathname === '/dashboard'}>
+		<li class="rounded-box" class:menu-active={page.url.pathname === '/dashboard'}>
 			<a href={resolve('/dashboard')}>
 				<HouseIcon weight="bold" />
 				Home
 			</a>
 		</li>
-		<li class="rounded-box" class:menu-active={$page.url.pathname === '/dashboard/themes'}>
+		<li class="rounded-box" class:menu-active={page.url.pathname === '/dashboard/themes'}>
 			<a href={resolve('/dashboard/themes')}>
 				<PaletteIcon weight="bold" />
 				Themes
 			</a>
 		</li>
-		<li class="rounded-box" class:menu-active={$page.url.pathname === '/dashboard/domains'}>
+		<li class="rounded-box" class:menu-active={page.url.pathname === '/dashboard/domains'}>
 			<a href={resolve('/dashboard/domains')}>
 				<GlobeIcon weight="bold" />
 				Domains
 			</a>
 		</li>
-		<li class="rounded-box" class:menu-active={$page.url.pathname === '/dashboard/settings'}>
+		<li class="rounded-box" class:menu-active={page.url.pathname === '/dashboard/settings'}>
 			<a href={resolve('/dashboard/settings')}>
 				<GearIcon weight="bold" />
 				Settings

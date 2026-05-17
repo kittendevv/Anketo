@@ -6,6 +6,8 @@
 	import PaperPlaneTiltIcon from 'phosphor-svelte/lib/PaperPlaneTiltIcon';
 	import TrashIcon from 'phosphor-svelte/lib/TrashIcon';
 
+	let delete_confirm_modal = $state<HTMLDialogElement>();
+
 	function timeAgo(dateInput: string | number | Date) {
 		const timeMs = new Date(dateInput).getTime();
 		const deltaSeconds = Math.round((timeMs - Date.now()) / 1000);
@@ -31,9 +33,9 @@
 	}
 </script>
 
-<a class="group my-1 rounded-box p-2 hover:bg-base-100" href={resolve(`/dashboard/forms/${id}`)}>
+<div class="group my-1 rounded-box p-2 hover:bg-base-100">
 	<div class="flex items-center">
-		<div class="flex-1">
+		<a class="flex-1" href={resolve(`/dashboard/forms/${id}`)}>
 			<div class="flex items-center">
 				<p class="mr-2 text-xl">{title}</p>
 				{#if status === 'draft'}
@@ -52,12 +54,31 @@
 			<p class="text-base-content/80">
 				Edited {timeAgo(updatedAt)}
 			</p>
-		</div>
+		</a>
 
 		<div class="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-			<button class="btn btn-ghost">
+			<button class="btn btn-ghost" onclick={() => delete_confirm_modal.showModal()}>
 				<TrashIcon weight="bold" />
 			</button>
 		</div>
 	</div>
-</a>
+</div>
+
+<dialog bind:this={delete_confirm_modal} class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Are you sure you want to delete {title}?</h3>
+		<p class="py-4">Say your final goodbyes. There is no 'undelete' button.</p>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn">Cancel</button>
+			</form>
+			<form method="POST" action="?/delete">
+				<input type="hidden" name="id" value={id} />
+				<button class="btn btn-soft btn-error" type="submit">
+					<TrashIcon weight="bold" />
+					Delete
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>

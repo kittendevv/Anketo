@@ -3,8 +3,8 @@ export const defaultTokens = {
 	'--anketo-font-size': '1rem',
 	'--anketo-color-text': '#e9d5ff',
 	'--anketo-color-text-muted': '#a78bca',
-	'--anketo-color-bg': '#2a1f33',
-	'--anketo-input-bg': '#1e1529',
+	'--anketo-color-bg': '#1e1529',
+	'--anketo-input-bg': '#2a1f33',
 	'--anketo-input-border': '#3d2b4a',
 	'--anketo-input-border-radius': '0.25rem',
 	'--anketo-input-padding': '0.5rem 0.75rem',
@@ -19,4 +19,23 @@ export const defaultTokens = {
 	'--anketo-section-color': '#c084fc'
 } as const;
 
-export type AnketoTokens = Partial<typeof defaultTokens>;
+export type AnketoTokens = {
+	'--anketo-font-family': string;
+	'--anketo-font-size': string;
+	'--anketo-color-text': string;
+	'--anketo-color-text-muted': string;
+	'--anketo-color-bg': string;
+	'--anketo-input-bg': string;
+	'--anketo-input-border': string;
+	'--anketo-input-border-radius': string;
+	'--anketo-input-padding': string;
+	'--anketo-input-focus-color': string;
+	'--anketo-btn-bg': string;
+	'--anketo-btn-color': string;
+	'--anketo-btn-border-radius': string;
+	'--anketo-btn-padding': string;
+	'--anketo-gap': string;
+	'--anketo-max-width': string;
+	'--anketo-section-font-size': string;
+	'--anketo-section-color': string;
+};
