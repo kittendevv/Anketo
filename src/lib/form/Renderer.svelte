@@ -37,10 +37,15 @@
 {:else if field.type === 'prose'}
 	<ProseBlock data={field} />
 {:else if field.type === 'section'}
-	<fieldset>
-		<h1>{field.label}</h1>
+	<div style="display: flex; flex-direction: column; gap: var(--anketo-gap);">
+		{#if field.label}
+			<h1>{field.label}</h1>
+		{/if}
 		{#each field.fields as f, i (i)}
-			<Renderer field={f} />
+			<!-- 2. Added the field wrapper so sub-fields get the correct label/input gap -->
+			<div class="anketo-field-wrapper">
+				<Renderer field={f} />
+			</div>
 		{/each}
-	</fieldset>
+	</div>
 {/if}
