@@ -1,23 +1,16 @@
-import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { forms, submissions } from '$lib/server/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { submissions } from '$lib/server/db/schema';
 import { parse } from '$lib/parser';
-import type { PageServerLoad, Actions } from './$types';
+import { getActiveFormSchemaBySlug } from '$lib/utils';
+import type { Actions } from './$types';
 
-export const load: PageServerLoad = async (event) => {
-	const form = await db.query.forms.findFirst({
-		where: and(eq(forms.slug, event.params.slug), eq(forms.status, 'public'))
-	});
+export const load = async (event) => {
+	const { form, schema } = await getActiveFormSchemaBySlug(event.params.slug);
 
-	if (!form) {
-		error(404, 'Form not found or is no longer public.');
-	}
-
-	// Parse it on the server so the frontend doesn't have to do the heavy lifting
-	const parsed = parse(form.content);
-
-	return { form, parsed };
+	return {
+		form,
+		parsed: parse(schema)
+	};
 };
 
 export const actions: Actions = {
@@ -25,20 +18,13 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const submittedData = Object.fromEntries(formData.entries());
 
-		const formRecord = await db.query.forms.findFirst({
-			columns: { id: true, content: true },
-			where: and(eq(forms.slug, event.params.slug), eq(forms.status, 'public'))
-		});
-
-		if (!formRecord) {
-			error(404, 'Form not found');
-		}
+		const { form, version } = await getActiveFormSchemaBySlug(event.params.slug);
 
 		await db.insert(submissions).values({
 			id: crypto.randomUUID(),
-			formId: formRecord.id,
-			data: submittedData,
-			snapshot: parse(formRecord.content)
+			formId: form.id,
+			formVersion: version.version,
+			data: submittedData
 		});
 
 		return { success: true };

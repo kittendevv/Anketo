@@ -4,7 +4,7 @@
 </script>
 
 <label for={data.label}>{data.label}</label>
-<select id={data.label} required={data.required}>
+<select id={data.label} name={data.label} required={data.required}>
 	{#each data.options as option, index (index)}
 		<option value={option}>{option}</option>
 	{/each}

@@ -4,4 +4,10 @@
 </script>
 
 <label for={data.label}>{data.label}</label>
-<input type="number" id={data.label} placeholder={data.placeholder} required={data.required} />
+<input
+	type="number"
+	id={data.label}
+	name={data.label}
+	placeholder={data.placeholder}
+	required={data.required}
+/>

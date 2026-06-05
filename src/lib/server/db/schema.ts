@@ -1,5 +1,6 @@
 import { integer, sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
+import type { ViewConfig } from '$lib/types';
 
 // Forms Schema
 export const forms = sqliteTable('forms', {
@@ -7,29 +8,67 @@ export const forms = sqliteTable('forms', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
+
 	title: text('title').notNull(),
 	slug: text('slug').notNull().unique(),
-	content: text('content').notNull(),
+
+	version: integer('version').notNull().default(1),
+
 	status: text('status', { enum: ['draft', 'public'] })
 		.notNull()
 		.default('draft'),
+
 	theme: text('theme', { mode: 'json' }),
+
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 		.notNull(),
+
 	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
 		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 		.notNull()
 		.$onUpdate(() => new Date())
 });
 
-export const submissions = sqliteTable('submissions', {
+export const formVersions = sqliteTable('form_versions', {
+	id: text('id').primaryKey(),
+
+	formId: text('form_id')
+		.notNull()
+		.references(() => forms.id, { onDelete: 'cascade' }),
+
+	version: integer('version').notNull(),
+
+	content: text('content').notNull(),
+
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+		.notNull()
+});
+
+export const formViews = sqliteTable('form_views', {
 	id: text('id').primaryKey(),
 	formId: text('form_id')
 		.notNull()
 		.references(() => forms.id, { onDelete: 'cascade' }),
+	name: text('name').notNull(),
+	config: text('config', { mode: 'json' }).$type<ViewConfig>().notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+		.notNull()
+});
+
+export const submissions = sqliteTable('submissions', {
+	id: text('id').primaryKey(),
+
+	formId: text('form_id')
+		.notNull()
+		.references(() => forms.id, { onDelete: 'cascade' }),
+
+	formVersion: integer('form_version').notNull(),
+
 	data: text('data', { mode: 'json' }).notNull(),
-	snapshot: text('snapshot', { mode: 'json' }).notNull(),
+
 	submittedAt: integer('submitted_at', { mode: 'timestamp_ms' })
 		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 		.notNull()

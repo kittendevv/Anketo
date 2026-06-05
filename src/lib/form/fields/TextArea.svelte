@@ -4,4 +4,5 @@
 </script>
 
 <label for={data.label}>{data.label}</label>
-<textarea id={data.label} placeholder={data.placeholder} required={data.required}></textarea>
+<textarea id={data.label} name={data.label} placeholder={data.placeholder} required={data.required}>
+</textarea>
