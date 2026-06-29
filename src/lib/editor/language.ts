@@ -43,6 +43,7 @@ export const anketoHighlighting = syntaxHighlighting(
 		{ tag: t.string, color: '#e9d5ff' }, // (label)
 		{ tag: t.meta, color: '#6d28d9' }, // [args]
 		{ tag: t.operator, color: '#c084fc' }, // - radio
-		{ tag: t.comment, color: '#4b5563', fontStyle: 'italic' } // ---
+		{ tag: t.comment, color: '#4b5563', fontStyle: 'italic' }, // ---
+		{ tag: t.invalid, color: '#f87171' }
 	])
 );
