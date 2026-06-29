@@ -2,6 +2,8 @@ import { StreamLanguage } from '@codemirror/language';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 
+const fields = ['text', 'textarea', 'number', 'checkbox', 'date', 'dropdown', 'email', 'radio'];
+
 export const anketoLanguage = StreamLanguage.define({
 	token(stream) {
 		// Section: #(label)[id]
@@ -9,8 +11,15 @@ export const anketoLanguage = StreamLanguage.define({
 			return 'heading';
 		}
 		// Field: @type(label)[args]
-		if (stream.match(/^@\w+/)) {
-			return 'keyword';
+		if (stream.peek() === '@') {
+			stream.next(); // consume @
+
+			let type = '';
+			while (/\w/.test(stream.peek() || '')) {
+				type += stream.next();
+			}
+
+			return fields.includes(type) ? 'keyword' : 'invalid';
 		}
 		if (stream.match(/^\([^)]+\)/)) {
 			return 'string';
