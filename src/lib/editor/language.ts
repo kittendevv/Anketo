@@ -26,6 +26,11 @@ export const anketoLanguage = StreamLanguage.define({
 		if (stream.match(/^---/)) {
 			return 'comment';
 		}
+		// Comments
+		if (stream.match(/^\/\//)) {
+			stream.skipToEnd();
+			return 'comment';
+		}
 		stream.next();
 		return null;
 	}

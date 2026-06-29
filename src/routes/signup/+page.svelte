@@ -17,7 +17,7 @@
 			error = err.message ?? 'Something went wrong';
 			return;
 		}
-		goto(resolve('/'));
+		goto(resolve('/dashboard'));
 	}
 </script>
 

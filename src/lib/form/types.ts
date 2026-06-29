@@ -13,6 +13,7 @@ export type FormField =
 export type BaseField = {
 	type: string;
 	label: string;
+	id?: string;
 	required?: boolean;
 	validation?: {
 		pattern?: string;
@@ -65,6 +66,7 @@ export type RadioField = BaseField & {
 // text block
 export type ProseBlock = {
 	type: 'prose';
+	id?: string;
 	content: string;
 };
 

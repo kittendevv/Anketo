@@ -1,6 +1,5 @@
 import { integer, sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import type { ViewConfig } from '$lib/types';
 
 // Forms Schema
 export const forms = sqliteTable('forms', {
@@ -41,18 +40,6 @@ export const formVersions = sqliteTable('form_versions', {
 
 	content: text('content').notNull(),
 
-	createdAt: integer('created_at', { mode: 'timestamp_ms' })
-		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-		.notNull()
-});
-
-export const formViews = sqliteTable('form_views', {
-	id: text('id').primaryKey(),
-	formId: text('form_id')
-		.notNull()
-		.references(() => forms.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
-	config: text('config', { mode: 'json' }).$type<ViewConfig>().notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 		.notNull()

@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
 	const session = authClient.useSession();
+
+	async function logout() {
+		await authClient.signOut();
+		goto(resolve('/'));
+	}
 
 	import HouseIcon from 'phosphor-svelte/lib/HouseIcon';
 	import PaletteIcon from 'phosphor-svelte/lib/PaletteIcon';
@@ -44,10 +50,10 @@
 	<div class="flex-0">
 		<p class="text-md ml-3 font-medium">{$session.data?.user?.name}</p>
 		<li>
-			<a href={resolve('/dashboard')}>
+			<button class="btn btn-ghost" onclick={logout}>
 				<SignOutIcon weight="bold" />
 				Logout
-			</a>
+			</button>
 		</li>
 	</div>
 </ul>

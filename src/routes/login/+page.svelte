@@ -15,7 +15,7 @@
 			error = err.message ?? 'Invalid email or password';
 			return;
 		}
-		goto(resolve('/'));
+		goto(resolve('/dashboard'));
 	}
 </script>
 

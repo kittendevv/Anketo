@@ -4,10 +4,18 @@ const regex = /@(\w+)\(([^)]+)\)(?:\[([^\]]*)\])?/;
 const regex_section = /#\(([^)]+)\)(?:\[([^\]]*)\])?/;
 const regex_radio = /^-\s+(.+)$/;
 
-function parseArgs(args: string[]): { required: boolean } {
-	return {
+function parseArgs(args: string[]): { required: boolean; id?: string } {
+	const result: { required: boolean; id?: string } = {
 		required: args.includes('r') || args.includes('required')
 	};
+
+	// Check for id= argument
+	const idArg = args.find((arg) => arg.startsWith('id='));
+	if (idArg) {
+		result.id = idArg.substring(3); // Remove "id=" prefix
+	}
+
+	return result;
 }
 
 function buildField(
@@ -19,6 +27,8 @@ function buildField(
 	lines: string[],
 	startIndex: number
 ): { data: any; nextIndex: number } {
+	const parsedArgs = parseArgs(args);
+
 	if (type === 'radio' || type === 'dropdown' || type === 'checkbox') {
 		const options = [];
 		let i = startIndex + 1;
@@ -35,12 +45,12 @@ function buildField(
 			i++;
 		}
 		return {
-			data: { type, label, args, options, ...parseArgs(args) },
+			data: { type, label, args, options, ...parsedArgs },
 			nextIndex: i
 		};
 	} else {
 		return {
-			data: { type, label, args, ...parseArgs(args) },
+			data: { type, label, args, ...parsedArgs },
 			nextIndex: startIndex + 1
 		};
 	}
@@ -69,10 +79,18 @@ export function parse(str: string) {
 	let currentSection: { type: 'section'; id: string; label: string; fields: any[] } | null = null;
 	while (i < lines.length) {
 		const line = lines[i];
+
+		// Skip comment lines (starting with // after optional whitespace)
+		const trimmed = line.trim();
+		if (trimmed.startsWith('//')) {
+			i++;
+			continue;
+		}
+
 		const sectionMatch = line.match(regex_section);
 		const fieldMatch = line.match(regex);
 		if (sectionMatch) {
-			const [_, label, id] = sectionMatch;
+			const [_, label, id] = sectionMatch; // fixed destructuring
 			sectionCount++;
 			currentSection = {
 				type: 'section',
@@ -85,7 +103,7 @@ export function parse(str: string) {
 			continue;
 		}
 		if (fieldMatch) {
-			const [_, type, label, bracketContent] = fieldMatch;
+			const [_, type, label, bracketContent] = fieldMatch; // fixed destructuring
 			const args = bracketContent ? bracketContent.split(',').map((arg) => arg.trim()) : [];
 			const field = buildField(type, label, args, regex, regex_radio, lines, i);
 			i = field.nextIndex;
@@ -100,8 +118,10 @@ export function parse(str: string) {
 			const proseLines = [];
 			while (i < lines.length) {
 				const currentLine = lines[i];
+				const trimmedCurrent = currentLine.trim();
 				if (
-					currentLine.trim() === '' ||
+					trimmedCurrent === '' ||
+					trimmedCurrent.startsWith('//') ||
 					currentLine.match(regex_section) ||
 					currentLine.match(regex)
 				) {
