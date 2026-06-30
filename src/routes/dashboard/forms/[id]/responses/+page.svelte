@@ -104,31 +104,19 @@
 	const csvUrl = URL.createObjectURL(csvBlob);
 
 	function submissionsToCsv(submissions: typeof data.submissions) {
-		const headers = ['id', 'formId', 'formVersion', 'submittedAt', 'car', 'femboy'];
-
-		const escape = (value: unknown) => {
-			if (value == null) return '';
-
-			let str = Array.isArray(value) ? value.join(', ') : String(value);
-
-			// Escape quotes
-			str = str.replace(/"/g, '""');
-
-			// Wrap if needed
-			if (/[",\n]/.test(str)) {
-				str = `"${str}"`;
-			}
-
-			return str;
-		};
+		const fieldIds = formFields.map((field) => field.id || field.label);
+		const headers = ['id', 'formId', 'formVersion', 'submittedAt', ...fieldIds];
 
 		const rows = submissions.map((submission) => [
-			escape(submission.id),
-			escape(submission.formId),
-			escape(submission.formVersion),
-			escape(submission.submittedAt),
-			escape(submission.data.car),
-			escape(submission.data.femboy)
+			submission.id,
+			submission.formId,
+			submission.formVersion,
+			submission.submittedAt,
+			...fieldIds.map((id) => {
+				const value = submission.data[id];
+
+				return Array.isArray(value) ? value.join(', ') : (value ?? '');
+			})
 		]);
 
 		return [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
