@@ -3,6 +3,11 @@
 	import { readable } from 'svelte/store';
 	import { parse } from '$lib/parser';
 	import type { FormField } from '$lib/form/types';
+	import { resolve } from '$app/paths';
+
+	// Icons
+	import BracketsCurlyIcon from 'phosphor-svelte/lib/BracketsCurlyIcon';
+	import DownloadIcon from 'phosphor-svelte/lib/DownloadIcon';
 
 	let { data } = $props();
 
@@ -35,7 +40,7 @@
 			return '';
 		}
 
-		const dataObj = submissionData as Record<string, string>;
+		const dataObj = submissionData as Record<string, string | string[]>;
 		const fieldId = field.id || field.label;
 
 		let value = dataObj[fieldId];
@@ -51,12 +56,17 @@
 					key.toLowerCase().includes(field.label.toLowerCase()) ||
 					field.label.toLowerCase().includes(key.toLowerCase())
 			);
+
 			if (matchingKey) {
 				value = dataObj[matchingKey];
 			}
 		}
 
-		return value || '';
+		if (Array.isArray(value)) {
+			return value.join(', ');
+		}
+
+		return value ?? '';
 	}
 
 	const tableData = readable(
@@ -83,35 +93,97 @@
 	);
 
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
+
+	// Downloading JSON and CSV
+	const jsonData = JSON.stringify(data.submissions);
+	const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+	const jsonUrl = URL.createObjectURL(jsonBlob);
+
+	const csvData = submissionsToCsv(data.submissions);
+	const csvBlob = new Blob([csvData], { type: 'text/csv' });
+	const csvUrl = URL.createObjectURL(csvBlob);
+
+	function submissionsToCsv(submissions: typeof data.submissions) {
+		const headers = ['id', 'formId', 'formVersion', 'submittedAt', 'car', 'femboy'];
+
+		const escape = (value: unknown) => {
+			if (value == null) return '';
+
+			let str = Array.isArray(value) ? value.join(', ') : String(value);
+
+			// Escape quotes
+			str = str.replace(/"/g, '""');
+
+			// Wrap if needed
+			if (/[",\n]/.test(str)) {
+				str = `"${str}"`;
+			}
+
+			return str;
+		};
+
+		const rows = submissions.map((submission) => [
+			escape(submission.id),
+			escape(submission.formId),
+			escape(submission.formVersion),
+			escape(submission.submittedAt),
+			escape(submission.data.car),
+			escape(submission.data.femboy)
+		]);
+
+		return [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+	}
 </script>
 
-<div class="mx-3 my-5 lg:mx-25">
-	<table {...$tableAttrs} class="table">
-		<thead>
-			{#each $headerRows as headerRow (headerRow.id)}
-				<tr>
-					{#each headerRow.cells as cell (cell.id)}
-						<Subscribe attrs={cell.attrs()} let:attrs>
-							<th {...attrs}>
-								<Render of={cell.render()} />
-							</th>
-						</Subscribe>
-					{/each}
-				</tr>
-			{/each}
-		</thead>
-		<tbody {...$tableBodyAttrs}>
-			{#each $rows as row (row.id)}
-				<tr>
-					{#each row.cells as cell (cell.id)}
-						<Subscribe attrs={cell.attrs()} let:attrs>
-							<td {...attrs}>
-								<Render of={cell.render()} />
-							</td>
-						</Subscribe>
-					{/each}
-				</tr>
-			{/each}
-		</tbody>
-	</table>
+<div class="flex flex-col">
+	<div class="flex h-15 items-center bg-base-300 px-4">
+		<div class="flex-1">
+			<h1 class="text-xl">Responses</h1>
+		</div>
+		<div>
+			<a class="btn" href={jsonUrl}>
+				<DownloadIcon weight="bold" />
+				JSON
+			</a>
+			<a class="btn" href={csvUrl}>
+				<DownloadIcon weight="bold" />
+				CSV
+			</a>
+			<a class="btn btn-primary" href={resolve(`/dashboard/forms/${data.formId}`)}>
+				<BracketsCurlyIcon weight="bold" />
+				Form Editor
+			</a>
+		</div>
+	</div>
+
+	<div class="mx-3 my-5 lg:mx-25">
+		<table {...$tableAttrs} class="table">
+			<thead>
+				{#each $headerRows as headerRow (headerRow.id)}
+					<tr>
+						{#each headerRow.cells as cell (cell.id)}
+							<Subscribe attrs={cell.attrs()} let:attrs>
+								<th {...attrs}>
+									<Render of={cell.render()} />
+								</th>
+							</Subscribe>
+						{/each}
+					</tr>
+				{/each}
+			</thead>
+			<tbody {...$tableBodyAttrs}>
+				{#each $rows as row (row.id)}
+					<tr>
+						{#each row.cells as cell (cell.id)}
+							<Subscribe attrs={cell.attrs()} let:attrs>
+								<td {...attrs}>
+									<Render of={cell.render()} />
+								</td>
+							</Subscribe>
+						{/each}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </div>

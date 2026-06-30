@@ -17,13 +17,12 @@ export const load = async (event) => {
 export const actions: Actions = {
 	default: async (event) => {
 		const formData = await event.request.formData();
-		const rawData = Object.fromEntries(formData.entries());
 
 		const { form, version, schema } = await getActiveFormSchemaBySlug(event.params.slug);
 
 		const parsedSchema = parse(schema);
 
-		const transformedData: Record<string, string> = {};
+		const transformedData: Record<string, string | string[]> = {};
 
 		const fieldsWithLabels = parsedSchema.content.filter(
 			(item): item is FormField & { label: string } =>
@@ -32,9 +31,21 @@ export const actions: Actions = {
 
 		for (const field of fieldsWithLabels) {
 			const fieldId = field.id || field.label;
-			const value = rawData[field.label];
-			if (value && typeof value === 'string' && value !== '') {
-				transformedData[fieldId] = value;
+
+			if (field.type === 'checkbox') {
+				const values = formData
+					.getAll(field.label)
+					.filter((v): v is string => typeof v === 'string');
+
+				if (values.length) {
+					transformedData[fieldId] = values;
+				}
+			} else {
+				const value = formData.get(field.label);
+
+				if (typeof value === 'string' && value !== '') {
+					transformedData[fieldId] = value;
+				}
 			}
 		}
 

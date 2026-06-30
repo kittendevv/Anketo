@@ -34,6 +34,7 @@ export const load: PageServerLoad = async (event) => {
 	});
 
 	return {
+		formId: event.params.id,
 		submissions: formSubmissions,
 		formSchema: latestVersion?.content ?? []
 	};
