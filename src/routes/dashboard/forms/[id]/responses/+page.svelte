@@ -32,6 +32,11 @@
 			item && typeof item === 'object' && 'label' in item && typeof item.label === 'string'
 	);
 
+	const dateFormatter = new Intl.DateTimeFormat(undefined, {
+		dateStyle: 'medium',
+		timeStyle: 'short'
+	});
+
 	function getValueFromSubmission(
 		submissionData: unknown,
 		field: FormField & { label: string }
@@ -71,27 +76,34 @@
 
 	const tableData = readable(
 		submissions.map((submission) => {
-			const rowData: Record<string, string> = {};
+			const rowData: Record<string, string> = {
+				submittedAt: dateFormatter.format(new Date(submission.submittedAt))
+			};
+
 			formFields.forEach((field) => {
 				const fieldId = field.id || field.label;
 				rowData[fieldId] = getValueFromSubmission(submission.data, field);
 			});
+
 			return rowData;
 		})
 	);
 
 	const table = createTable(tableData);
 
-	const columns = table.createColumns(
-		formFields.map((field) => {
+	const columns = table.createColumns([
+		table.column({
+			header: 'Submitted At',
+			accessor: 'submittedAt'
+		}),
+		...formFields.map((field) => {
 			const fieldId = field.id || field.label;
 			return table.column({
 				header: field.label,
 				accessor: fieldId
 			});
 		})
-	);
-
+	]);
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 
 	// Downloading JSON and CSV
@@ -115,7 +127,7 @@
 			...fieldIds.map((id) => {
 				const value = submission.data[id];
 
-				return Array.isArray(value) ? value.join(', ') : (value ?? '');
+				return Array.isArray(value) ? value.join(' / ') : (value ?? '');
 			})
 		]);
 
