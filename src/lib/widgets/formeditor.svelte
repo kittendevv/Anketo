@@ -17,15 +17,18 @@
 	import FileDashedIcon from 'phosphor-svelte/lib/FileDashedIcon';
 	import PaperPlaneTiltIcon from 'phosphor-svelte/lib/PaperPlaneTiltIcon';
 	import ArrowSquareOutIcon from 'phosphor-svelte/lib/ArrowSquareOutIcon';
+	import ChatCircleTextIcon from 'phosphor-svelte/lib/ChatCircleTextIcon';
 
 	// variables
 	let {
 		initial,
 		status,
+		id,
 		slug
 	}: {
 		initial: string;
 		status: 'draft' | 'public';
+		id: string;
 		slug?: string;
 	} = $props();
 
@@ -68,6 +71,10 @@
 							<ArrowSquareOutIcon weight="bold" />
 						</a>
 					{/if}
+					<a class="btn" href={resolve(`/dashboard/forms/${id}/responses`)}>
+						<ChatCircleTextIcon weight="bold" />
+						Responses
+					</a>
 					<button onclick={() => unpublish_confirm_modal.showModal()} class="btn" type="submit">
 						<FileDashedIcon weight="bold" />
 						Unpublish

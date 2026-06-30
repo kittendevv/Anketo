@@ -85,31 +85,33 @@
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 </script>
 
-<table {...$tableAttrs} class="table">
-	<thead>
-		{#each $headerRows as headerRow (headerRow.id)}
-			<tr>
-				{#each headerRow.cells as cell (cell.id)}
-					<Subscribe attrs={cell.attrs()} let:attrs>
-						<th {...attrs}>
-							<Render of={cell.render()} />
-						</th>
-					</Subscribe>
-				{/each}
-			</tr>
-		{/each}
-	</thead>
-	<tbody {...$tableBodyAttrs}>
-		{#each $rows as row (row.id)}
-			<tr>
-				{#each row.cells as cell (cell.id)}
-					<Subscribe attrs={cell.attrs()} let:attrs>
-						<td {...attrs}>
-							<Render of={cell.render()} />
-						</td>
-					</Subscribe>
-				{/each}
-			</tr>
-		{/each}
-	</tbody>
-</table>
+<div class="mx-3 my-5 lg:mx-25">
+	<table {...$tableAttrs} class="table">
+		<thead>
+			{#each $headerRows as headerRow (headerRow.id)}
+				<tr>
+					{#each headerRow.cells as cell (cell.id)}
+						<Subscribe attrs={cell.attrs()} let:attrs>
+							<th {...attrs}>
+								<Render of={cell.render()} />
+							</th>
+						</Subscribe>
+					{/each}
+				</tr>
+			{/each}
+		</thead>
+		<tbody {...$tableBodyAttrs}>
+			{#each $rows as row (row.id)}
+				<tr>
+					{#each row.cells as cell (cell.id)}
+						<Subscribe attrs={cell.attrs()} let:attrs>
+							<td {...attrs}>
+								<Render of={cell.render()} />
+							</td>
+						</Subscribe>
+					{/each}
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+</div>
